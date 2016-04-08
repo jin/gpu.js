@@ -175,7 +175,19 @@ var GPU = (function() {
 	/// 	{Canvas object} that the instance use
 	///
 	function getCanvas(mode) {
-		return this.canvas;
+    // Workaround of the canvas for the CPU fallback.
+    // Once getContext("webgl") is called on the canvas,
+    // it will always be a canvas with WebGL context.
+    // In the CPU mode, we need a RenderingContext2D instead
+    // of a WebGL context, so we'll need to create a new
+    // canvas with the correct context.
+    // 
+    // TODO: Submit PR.
+    if (mode === "cpu") {
+			this.canvas = GPUUtils.init_canvas();
+      this.canvas.getContext("2d"); 
+    } 
+    return this.canvas;
 	};
 	GPU.prototype.getCanvas = getCanvas;
 	
